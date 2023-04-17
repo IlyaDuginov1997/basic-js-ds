@@ -56,22 +56,46 @@ class BinarySearchTree {
     }
   }
 
-  find(data) {
+  find(data, withParent = false) {
     let currentNode = this.rootNode
+    let parentNode = null;
 
     while(true) {
       if (currentNode === undefined || currentNode === null) return null;
-      if (currentNode.data === data) return currentNode;
+      if (currentNode.data === data) {
+        if (withParent) {
+          return {currentNode, parentNode}
+        }
+        return currentNode;
+      }
       if (data < currentNode.data) {
+        parentNode = currentNode;
         currentNode = currentNode.left;
       } else {
+        parentNode = currentNode;
         currentNode = currentNode.right;
       }
     }
   }
 
   remove(data) {
+    const {currentNode, parentNode} = this.find(data, true);
+    let currentNodePosition = (currentNode.data > parentNode.data) ? 'right' : 'left';
 
+    if (currentNode.left === null && currentNode.right === null) {
+      parentNode[currentNodePosition] = null;
+      return
+    }
+
+    if (!!currentNode.left && currentNode.right === null) {
+      parentNode[currentNodePosition] = currentNode.left;
+      return
+    }
+
+    if (!!currentNode.right && currentNode.left === null) {
+      parentNode[currentNodePosition] = currentNode.right;
+      return
+    }
   }
 
   min() {
@@ -102,15 +126,28 @@ class BinarySearchTree {
 }
 
 const tree = new BinarySearchTree();
-tree.add(8);
-tree.add(3);
-tree.add(4);
 tree.add(9);
-tree.add(11);
-tree.add(24);
-tree.add(1);
+tree.add(14);
 tree.add(2);
-tree.add(104);
+tree.add(6);
+tree.add(128);
+tree.add(8);
+tree.add(31);
+tree.add(54);
+tree.add(1);
+tree.remove(14);
+tree.remove(8);
+// tree.remove(9);
+
+console.log(tree.has(14))
+console.log(tree.has(8))
+console.log(tree.has(9))
+console.log(tree.has(2))
+console.log(tree.has(6))
+console.log(tree.has(128))
+console.log(tree.has(31))
+console.log(tree.has(54))
+console.log(tree.has(1))
 
 module.exports = {
   BinarySearchTree
